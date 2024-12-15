@@ -1,3 +1,5 @@
+package ma.ensa.projet.ui
+
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,17 +23,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ma.ensa.projet.data.Chambre
 import ma.ensa.projet.data.Client
+import ma.ensa.projet.data.Reservation
 import ma.ensa.projet.data.ReservationRequest
 
 @Composable
-fun AddReservationDialog(
+fun EditReservationDialog(
+    reservation: Reservation,
     onDismiss: () -> Unit,
     onConfirm: (ReservationRequest) -> Unit
 ) {
-    var dateDebut by remember { mutableStateOf("") }
-    var dateFin by remember { mutableStateOf("") }
-    var clientId by remember { mutableStateOf("") }
-    var chambreIds by remember { mutableStateOf("") }
+    var dateDebut by remember { mutableStateOf(reservation.checkInDate) }
+    var dateFin by remember { mutableStateOf(reservation.checkOutDate) }
+    var clientId by remember { mutableStateOf(reservation.client.id.toString()) }
+    var chambreIds by remember { mutableStateOf(reservation.chambres?.joinToString(",") { it.id.toString() } ?: "") }
     val context = LocalContext.current
 
     AlertDialog(
@@ -41,17 +45,17 @@ fun AddReservationDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.Event,
-                    contentDescription = "Add Reservation",
-                    tint = Color(0xFF2196F3),
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit Reservation",
+                    tint = Color(0xFF4CAF50),
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Ajouter une Réservation",
+                    text = "Modifier la Réservation",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2196F3)
+                    color = Color(0xFF4CAF50)
                 )
             }
         },
@@ -95,7 +99,8 @@ fun AddReservationDialog(
                         .map { Chambre(it) }
 
                     if (parsedClientId != null && parsedChambreIds.isNotEmpty() &&
-                        dateDebut.isNotEmpty() && dateFin.isNotEmpty()) {
+                        dateDebut.isNotEmpty() && dateFin.isNotEmpty()
+                    ) {
                         val reservationRequest = ReservationRequest(
                             checkInDate = dateDebut,
                             checkOutDate = dateFin,
@@ -112,7 +117,7 @@ fun AddReservationDialog(
                         ).show()
                     }
                 },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2196F3)),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50)),
                 modifier = Modifier.padding(horizontal = 4.dp)
             ) {
                 Icon(
@@ -121,7 +126,7 @@ fun AddReservationDialog(
                     tint = Color.White
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Ajouter", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(text = "Modifier", color = Color.White, fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
@@ -162,11 +167,11 @@ fun StyledTextField(
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = Color(0xFF2196F3),
+            tint = Color(0xFF4CAF50),
             modifier = Modifier
                 .size(24.dp)
                 .background(
-                    color = Color(0xFF2196F3).copy(alpha = 0.1f),
+                    color = Color(0xFF4CAF50).copy(alpha = 0.1f),
                     shape = CircleShape
                 )
                 .padding(4.dp)
@@ -178,7 +183,7 @@ fun StyledTextField(
             label = { Text(label) },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
-                focusedIndicatorColor = Color(0xFF2196F3),
+                focusedIndicatorColor = Color(0xFF4CAF50),
                 unfocusedIndicatorColor = Color.Gray,
                 textColor = Color.Black
             ),
