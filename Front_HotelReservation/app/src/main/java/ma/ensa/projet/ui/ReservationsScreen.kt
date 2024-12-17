@@ -33,6 +33,7 @@ fun ReservationsScreen(
     var showAddDialog by remember { mutableStateOf(false) }
     var reservationToEdit by remember { mutableStateOf<Reservation?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
+    var reservationToDelete by remember { mutableStateOf<Reservation?>(null) }
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -63,8 +64,9 @@ fun ReservationsScreen(
                     reservation = reservation,
                     onDeleteClick = {
                         coroutineScope.launch {
-                            onDeleteClick(reservation)
-                            snackbarHostState.showSnackbar("Réservation supprimée : ${reservation.id}")
+                            //onDeleteClick(reservation)
+                            //snackbarHostState.showSnackbar("Réservation supprimée : ${reservation.id}")
+                            reservationToDelete = reservation
                         }
                     },
                     onEditClick = {
@@ -73,6 +75,48 @@ fun ReservationsScreen(
                 )
             }
         }
+    }
+
+    // Add Dialog for Confirmation before Deletion
+    reservationToDelete?.let { reservation ->
+        AlertDialog(
+            onDismissRequest = { reservationToDelete = null },
+            title = { Text("Confirmer la suppression") },
+            text = { Text("Voulez-vous vraiment supprimer cette réservation ?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            onDeleteClick(reservation)
+                            snackbarHostState.showSnackbar("Réservation supprimée : ${reservation.id}")
+                        }
+                        reservationToDelete = null
+                    }
+                ) {
+                    Text("Confirmer")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { reservationToDelete = null }
+                ) {
+                    Text("Annuler")
+                }
+            }
+        )
+    }
+
+    if (showAddDialog) {
+        AddReservationDialog(
+            onDismiss = { showAddDialog = false },
+            onConfirm = { reservationRequest ->
+                coroutineScope.launch {
+                    onAddClick(reservationRequest)
+                    snackbarHostState.showSnackbar("Réservation ajoutée avec succès")
+                }
+                showAddDialog = false
+            }
+        )
     }
 
     if (showAddDialog) {
