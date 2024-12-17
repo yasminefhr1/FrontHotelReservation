@@ -33,9 +33,16 @@ Ce projet implémente un **système de gestion des réservations d'hôtels** ave
 
 ---
 
-**Résumé de l'Étude de Cas :**
+## **Résumé de l'Étude de Cas :**
 
 Le but de cette étude de cas est de comparer différentes technologies d'API pour la gestion d'un système de réservation d'hôtels. Le système doit permettre aux utilisateurs de créer, consulter, modifier et supprimer des réservations d'hôtels via des appels API. Pour cela, nous allons tester quatre technologies populaires : **REST**, **SOAP**, **GraphQL**, et **gRPC**. Ces technologies seront évaluées sous plusieurs angles : **performances**, **scalabilité**, **simplicité d'implémentation**, **sécurité**, et **flexibilité**. L'étude vise à déterminer quelle technologie est la plus adaptée pour gérer des millions de requêtes simultanées, tout en assurant une consommation minimale des ressources, une latence réduite et une capacité à évoluer avec des volumes de données variables. Les tests sont réalisés en utilisant des scénarios réels, avec différentes tailles de messages et charges simultanées, et les résultats obtenus seront analysés pour fournir des recommandations spécifiques selon les cas d’usage. Cette comparaison permettra de faire un choix éclairé sur la technologie la mieux adaptée aux besoins d'une plateforme de réservation d’hôtels moderne.
+
+---
+
+
+**Interfaces :**
+![Ajouter un titre](https://github.com/user-attachments/assets/1d544b6d-14ca-4116-a49d-4b82eb29387f)
+
 
 ---
 
