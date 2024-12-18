@@ -45,65 +45,68 @@ class MainActivity : ComponentActivity() {
     // Fonction pour récupérer les réservations
     private fun fetchReservations() {
         Log.d("MainActivity", "Fetching reservations")
-        reservationService.getReservations(
-            onSuccess = { reservations ->
-                Log.d("MainActivity", "Reservations fetched: ${reservations.size}")
+
+        reservationService.getReservationsWithTime(
+            onSuccess = { reservations, elapsedTime ->
+                Log.d("Performance", "GET Reservations: $elapsedTime ms")
                 reservationsList = reservations
-                isLoading = false
-                errorMessage = null
             },
             onError = { error ->
-                Log.e("MainActivity", "Error fetching reservations: $error")
-                reservationsList = emptyList()
-                isLoading = false
-                errorMessage = "Erreur lors de la récupération des réservations : $error"
+                Log.e("Performance", "GET Reservations failed: $error")
             }
         )
+
     }
 
     // Fonction pour ajouter une réservation
     private fun addReservation(reservationRequest: ReservationRequest) {
-        reservationService.addReservation(
+
+        reservationService.addReservationWithTime(
             reservationRequest,
-            onSuccess = { newReservation ->
+            onSuccess = { newReservation, elapsedTime ->
                 reservationsList = reservationsList + newReservation
+                Log.d("Performance", "Ajout terminé en ${elapsedTime}ms")
             },
             onError = { error ->
                 errorMessage = "Erreur lors de l'ajout : $error"
             }
         )
+
     }
+
 
     private fun deleteReservation(reservation: Reservation) {
         reservation.id?.let { id ->
-            reservationService.deleteReservation(
+            reservationService.deleteReservationWithTime(
                 id,
-                onSuccess = {
-                    // Directly update the list by removing the deleted reservation
+                onSuccess = { elapsedTime ->
                     reservationsList = reservationsList.filter { it.id != id }
-                    Log.d("MainActivity", "Reservation deleted: $id")
+                    Log.d("MainActivity", "Reservation deleted: $id in $elapsedTime ms")
                 },
                 onError = { error ->
-                    errorMessage = "Erreur lors de la suppression : $error"
+                    Log.e("MainActivity", "Delete Reservation Error Details: $error")
+                    // Afficher un message d'erreur à l'utilisateur
+                    errorMessage = "Impossible de supprimer la réservation. Veuillez réessayer."
                 }
             )
+        } ?: run {
+            Log.e("MainActivity", "Reservation ID is null")
+            errorMessage = "ID de réservation invalide"
         }
     }
-
-
-
 
     // Fonction pour modifier une réservation
     private fun editReservation(reservation: Reservation, updatedRequest: ReservationRequest) {
         reservation.id?.let { id ->
-            reservationService.updateReservation(
+            reservationService.updateReservationWithTime(
                 id = id,
                 reservationRequest = updatedRequest,
-                onSuccess = { updatedReservation ->
+                onSuccess = { updatedReservation, elapsedTime ->
                     // Mettre à jour la liste avec la réservation modifiée
                     reservationsList = reservationsList.map {
                         if (it.id == updatedReservation.id) updatedReservation else it
                     }
+                    Log.d("Performance", "Mise à jour terminée en ${elapsedTime}ms")
                 },
                 onError = { error ->
                     errorMessage = "Erreur lors de la modification : $error"
@@ -111,5 +114,4 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-
 }
